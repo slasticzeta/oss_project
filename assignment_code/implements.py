@@ -25,7 +25,7 @@ class Basic:
 
 
 class Block(Basic):
-    active_blocks = 0                       # 활성화된 블록의 수를 관리
+    active_blocks = 0                       # 활성화된 블록의 수를 관리(alive()에서 쓰임)
 
     def __init__(self, color: tuple, pos: tuple = (0,0), alive = True):
         super().__init__(color, 0, pos, config.block_size)
@@ -89,7 +89,11 @@ class Ball(Basic):
             self.dir = 360 - self.dir
         pass
         
-    def alive(self):
-        # ============================================
-        # TODO: Implement a service that returns whether the ball is alive or not
+    def alive(self):                                        # 게임이 clear된 이후에 Life 감소를 막기 위해 active_blocks 도입
+        if Block.active_blocks == 0:                        # 모든 블럭이 없으면 True반환
+            return True
+        
+        if self.rect.top >= config.display_dimension[1]:    # 공이 화면 아래로 떨어지면 Life 감소
+            return False
+        
         pass
