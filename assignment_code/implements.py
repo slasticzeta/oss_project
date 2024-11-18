@@ -25,17 +25,22 @@ class Basic:
 
 
 class Block(Basic):
+    active_blocks = 0                       # 활성화된 블록의 수를 관리
+
     def __init__(self, color: tuple, pos: tuple = (0,0), alive = True):
         super().__init__(color, 0, pos, config.block_size)
         self.pos = pos
         self.alive = alive
+        if self.alive:
+            Block.active_blocks += 1        # 블럭 생성 시 1씩 추가
 
     def draw(self, surface) -> None:
         pygame.draw.rect(surface, self.color, self.rect)
     
     def collide(self):
-        # ============================================
-        # TODO: Implement an event when block collides with a ball
+        if self.alive:
+            self.alive = False
+            Block.active_blocks -= 1        #블럭 충돌 시 1씩 감소
         pass
 
 
