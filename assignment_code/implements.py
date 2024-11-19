@@ -25,17 +25,22 @@ class Basic:
 
 
 class Block(Basic):
+    active_blocks = 0                       # 활성화된 블록의 수를 관리(alive()에서 쓰임)
+
     def __init__(self, color: tuple, pos: tuple = (0,0), alive = True):
         super().__init__(color, 0, pos, config.block_size)
         self.pos = pos
         self.alive = alive
+        if self.alive:
+            Block.active_blocks += 1        # 블럭 생성 시 1씩 추가
 
     def draw(self, surface) -> None:
         pygame.draw.rect(surface, self.color, self.rect)
     
     def collide(self):
-        # ============================================
-        # TODO: Implement an event when block collides with a ball
+        if self.alive:
+            self.alive = False
+            Block.active_blocks -= 1        #블럭 충돌 시 1씩 감소
         pass
 
 
@@ -66,8 +71,11 @@ class Ball(Basic):
         pygame.draw.ellipse(surface, self.color, self.rect)
 
     def collide_block(self, blocks: list):
-        # ============================================
-        # TODO: Implement an event when the ball hits a block
+        for block in blocks:
+            if block.alive and self.rect.colliderect(block.rect):
+                block.collide()
+                blocks.remove(block)                    # 충돌 시 블럭 삭제
+                self.dir = 360 - self.dir               # 충 돌 후 반대 방향으로 날아감
         pass
 
     def collide_paddle(self, paddle: Paddle) -> None:
@@ -75,14 +83,17 @@ class Ball(Basic):
             self.dir = 360 - self.dir + random.randint(-5, 5)
 
     def hit_wall(self):
-        # ============================================
-        # TODO: Implement a service that bounces off when the ball hits the wall
+        if self.rect.left <= 0 or self.rect.right >= config.display_dimension[0]:   # 좌우 벽 충돌
+            self.dir = 180 - self.dir
+        if self.rect.top <= 0:                                                      # 상단 벽 충돌
+            self.dir = 360 - self.dir
         pass
-        # 좌우 벽 충돌
         
-        # 상단 벽 충돌
-    
-    def alive(self):
-        # ============================================
-        # TODO: Implement a service that returns whether the ball is alive or not
+    def alive(self):                                        # 게임이 clear된 이후에 Life 감소를 막기 위해 active_blocks 도입
+        if Block.active_blocks == 0:                        # 모든 블럭이 없으면 True반환
+            return True
+        
+        if self.rect.top >= config.display_dimension[1]:    # 공이 화면 아래로 떨어지면 Life 감소
+            return False
+        
         pass
