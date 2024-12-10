@@ -43,6 +43,11 @@ one_more_prob = 0.3
 fever_prob = 0.1
 add_score_prob = 0.1
 paddle_long_prob = 0.1
+item_drop_prob = 0.2         # 아이템 설정
+item_colors = {
+    "red": (255, 0, 0),
+    "blue": (0, 0, 255)
+}
 
 fever_time = 5
 
