@@ -43,6 +43,11 @@ one_more_prob = 0.3
 fever_prob = 0.1
 add_score_prob = 0.1
 paddle_long_prob = 0.1
+item_drop_prob = 0.2          # 아이템이 드롭될 확률 추가 (20%)
+item_colors = {               # 아이템 색상 추가
+    "red": (255, 0, 0),
+    "blue": (0, 0, 255)
+}
 
 fever_time = 5
 

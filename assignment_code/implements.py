@@ -23,7 +23,14 @@ class Basic:
         self.rect.move_ip(dx, dy)
         self.center = (self.rect.centerx, self.rect.centery)
 
-
+class Item(Basic):  # 아이템 클래스
+    def __init__(self, pos: tuple):
+        self.effect = random.choice(["red", "blue"])    # 아이템 효과를 무작위로 선택 ("red" 또는 "blue")
+        color = config.item_colors[self.effect]
+        super().__init__(color, 2, pos, config.item_size)  # 기본 속성 초기화
+    def draw(self, surface):
+        pygame.draw.ellipse(surface, self.color, self.rect) 
+        
 class Block(Basic):
     active_blocks = 0                       # 활성화된 블록의 수를 관리(alive()에서 쓰임)
 
@@ -41,7 +48,6 @@ class Block(Basic):
         if self.alive:
             self.alive = False
             Block.active_blocks -= 1        #블럭 충돌 시 1씩 감소
-        pass
 
 
 class Paddle(Basic):
@@ -70,13 +76,14 @@ class Ball(Basic):
     def draw(self, surface):
         pygame.draw.ellipse(surface, self.color, self.rect)
 
-    def collide_block(self, blocks: list):
-        for block in blocks:
+    def collide_block(self, blocks, items):
+        for block in blocks[:]:  # 공과 블록 충돌 시 아이템 드롭 추가
             if block.alive and self.rect.colliderect(block.rect):
                 block.collide()
                 blocks.remove(block)                    # 충돌 시 블럭 삭제
-                self.dir = 360 - self.dir               # 충 돌 후 반대 방향으로 날아감
-        pass
+                self.dir = 360 - self.dir               # 충돌 후 반대 방향으로 날아감
+                if random.random() < config.item_drop_prob:    # 일정 확률로 아이템 드롭
+                    items.append(Item(block.rect.center))   # 아이템 생성 및 리스트에 추가
 
     def collide_paddle(self, paddle: Paddle) -> None:
         if self.rect.colliderect(paddle.rect):
@@ -87,13 +94,8 @@ class Ball(Basic):
             self.dir = 180 - self.dir
         if self.rect.top <= 0:                                                      # 상단 벽 충돌
             self.dir = 360 - self.dir
-        pass
         
-    def alive(self):                                        # 게임이 clear된 이후에 Life 감소를 막기 위해 active_blocks 도입
-        if Block.active_blocks == 0:                        # 모든 블럭이 없으면 True반환
-            return True
-        
+    def alive(self) -> bool:                                        # 게임이 clear된 이후에 Life 감소를 막기 위해 active_blocks 도입
         if self.rect.top >= config.display_dimension[1]:    # 공이 화면 아래로 떨어지면 Life 감소
             return False
-        
-        pass
+        return True
