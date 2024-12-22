@@ -34,6 +34,14 @@ def create_blocks():
             color = config.colors[color_index]
             block = Block(color, (x, y))
             BLOCKS.append(block)
+            
+def handle_item_effect(item):  # 아이템 효과를 처리하는 함수
+    global BALLS
+    if item.effect == "red":  # 빨간색 아이템 효과: 공 추가
+        BALLS.append(Ball((paddle.rect.centerx, paddle.rect.top)))
+    elif item.effect == "blue":  # 파란색 아이템 효과: 모든 공 복제 (예시)
+        for ball in BALLS[:]:
+            BALLS.append(Ball(ball.rect.center))
 
 
 def tick():
@@ -44,6 +52,7 @@ def tick():
     global paddle
     global ball1
     global start
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -74,7 +83,9 @@ def tick():
         if item.rect.top > config.display_dimension[1]:   # 화면 아래로 사라진 아이템 제거
             ITEMS.remove(item)  
         elif item.rect.colliderect(paddle.rect):      # 패들과 충돌한 아이템 제거
-            ITEMS.remove(item)  
+            if item.effect == "red":  # 빨간색 공 아이템
+                BALLS.append(Ball((paddle.rect.centerx, paddle.rect.top)))  # 새로운 공 추가
+            ITEMS.remove(item)  # 아이템 제거
 
 def main():
     global life
