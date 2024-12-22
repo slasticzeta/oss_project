@@ -1,5 +1,5 @@
 import sys
-from implements import Basic, Block, Paddle, Ball, Item
+from implements import Basic, Block, Paddle, Ball, Item # Item 클래스 추가
 import config
 
 import pygame
@@ -63,17 +63,17 @@ def tick():
             ball.rect.centerx = paddle.rect.centerx
             ball.rect.bottom = paddle.rect.top
 
-        ball.collide_block(BLOCKS, ITEMS)
+        ball.collide_block(BLOCKS, ITEMS)  # 블록 충돌 처리 시 아이템 리스트 전달
         ball.collide_paddle(paddle)
         ball.hit_wall()
         if not ball.alive():
             BALLS.remove(ball)
 
-    for item in ITEMS[:]:    # 아이템 이동
-        item.move()
-        if item.rect.top > config.display_dimension[1]:
+    for item in ITEMS[:]:    # 아이템 리스트를 복사하여 반복
+        item.move()        # 아이템 이동
+        if item.rect.top > config.display_dimension[1]:   # 화면 아래로 사라진 아이템 제거
             ITEMS.remove(item)  
-        elif item.rect.colliderect(paddle.rect):
+        elif item.rect.colliderect(paddle.rect):      # 패들과 충돌한 아이템 제거
             ITEMS.remove(item)  
 
 def main():
@@ -119,7 +119,7 @@ def main():
         else:
             for ball in BALLS:
                 ball.draw(surface)
-            for item in ITEMS:
+            for item in ITEMS:        # 아이템을 화면에 출력
                 item.draw(surface)
 
         pygame.display.update()

@@ -25,11 +25,11 @@ class Basic:
 
 class Item(Basic):  # 아이템 클래스
     def __init__(self, pos: tuple):
-        self.effect = random.choice(["red", "blue"])
+        self.effect = random.choice(["red", "blue"])    # 아이템 효과를 무작위로 선택 ("red" 또는 "blue")
         color = config.item_colors[self.effect]
-        super().__init__(color, 2, pos, config.item_size)
+        super().__init__(color, 2, pos, config.item_size)  # 기본 속성 초기화
     def draw(self, surface):
-        pygame.draw.ellipse(surface, self.color, self.rect)
+        pygame.draw.ellipse(surface, self.color, self.rect) 
         
 class Block(Basic):
     active_blocks = 0                       # 활성화된 블록의 수를 관리(alive()에서 쓰임)
@@ -77,13 +77,13 @@ class Ball(Basic):
         pygame.draw.ellipse(surface, self.color, self.rect)
 
     def collide_block(self, blocks, items):
-        for block in blocks[:]:
+        for block in blocks[:]:  # 공과 블록 충돌 시 아이템 드롭 추가
             if block.alive and self.rect.colliderect(block.rect):
                 block.collide()
                 blocks.remove(block)                    # 충돌 시 블럭 삭제
                 self.dir = 360 - self.dir               # 충돌 후 반대 방향으로 날아감
-                if random.random() < config.item_drop_prob:
-                    items.append(Item(block.rect.center))   
+                if random.random() < config.item_drop_prob:    # 일정 확률로 아이템 드롭
+                    items.append(Item(block.rect.center))   # 아이템 생성 및 리스트에 추가
 
     def collide_paddle(self, paddle: Paddle) -> None:
         if self.rect.colliderect(paddle.rect):
