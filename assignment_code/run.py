@@ -1,5 +1,5 @@
 import sys
-from implements import Basic, Block, Paddle, Ball, Item # Item 클래스 추가
+from implements import Basic, Block, Paddle, Ball, Item
 import config
 
 import pygame
@@ -7,7 +7,7 @@ from pygame.locals import QUIT, Rect, K_ESCAPE, K_SPACE
 
 
 pygame.init()
-pygame.key.set_repeat(3, 3)
+pygame.key_set_repeat(3, 3)
 surface = pygame.display.set_mode(config.display_dimension)
 
 fps_clock = pygame.time.Clock()
@@ -37,13 +37,8 @@ def create_blocks():
 
 
 def tick():
-    global life
-    global BLOCKS
-    global ITEMS
-    global BALLS
-    global paddle
-    global ball1
-    global start
+    global life, BLOCKS, ITEMS, BALLS, paddle, ball1, start
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -52,7 +47,7 @@ def tick():
             if event.key == K_ESCAPE:  # ESC 키가 눌렸을 때
                 pygame.quit()
                 sys.exit()
-            if event.key == K_SPACE:  # space키가 눌려지만 start 변수가 True로 바뀌며 게임 시작
+            if event.key == K_SPACE:  # space키가 눌리면 게임 시작
                 start = True
             paddle.move_paddle(event)
 
@@ -63,27 +58,26 @@ def tick():
             ball.rect.centerx = paddle.rect.centerx
             ball.rect.bottom = paddle.rect.top
 
-        ball.collide_block(BLOCKS, ITEMS)  # 블록 충돌 처리 시 아이템 리스트 전달
+        ball.collide_block(BLOCKS, ITEMS)
         ball.collide_paddle(paddle)
         ball.hit_wall()
         if not ball.alive():
             BALLS.remove(ball)
 
-    for item in ITEMS[:]:    # 아이템 리스트를 복사하여 반복
-        item.move()        # 아이템 이동
-        if item.rect.top > config.display_dimension[1]:   # 화면 아래로 사라진 아이템 제거
-            ITEMS.remove(item)  
-        elif item.rect.colliderect(paddle.rect):      # 패들과 충돌한 아이템 제거
-            ITEMS.remove(item)  
+    # 아이템 이동 및 충돌 처리
+    for item in ITEMS[:]:
+        item.move()
+        if item.rect.top > config.display_dimension[1]:
+            ITEMS.remove(item)  # 화면 아래로 사라진 아이템 제거
+        elif item.rect.colliderect(paddle.rect):
+            # 아이템 충돌 처리
+            if item.effect == "red":  # 빨간색 공 아이템
+                BALLS.append(Ball((paddle.rect.centerx, paddle.rect.top)))  # 새로운 공 추가
+            ITEMS.remove(item)  # 아이템 제거
+
 
 def main():
-    global life
-    global BLOCKS
-    global ITEMS
-    global BALLS
-    global paddle
-    global ball1
-    global start
+    global life, BLOCKS, ITEMS, BALLS, paddle, ball1, start
 
     my_font = pygame.font.SysFont(None, 50)
     mess_clear = my_font.render("Cleared!", True, config.colors[2])
@@ -119,7 +113,7 @@ def main():
         else:
             for ball in BALLS:
                 ball.draw(surface)
-            for item in ITEMS:        # 아이템을 화면에 출력
+            for item in ITEMS:
                 item.draw(surface)
 
         pygame.display.update()
