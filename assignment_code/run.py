@@ -74,7 +74,9 @@ def tick():
         if item.rect.top > config.display_dimension[1]:   # 화면 아래로 사라진 아이템 제거
             ITEMS.remove(item)  
         elif item.rect.colliderect(paddle.rect):      # 패들과 충돌한 아이템 제거
-            ITEMS.remove(item)  
+            if item.effect == "red":  # 빨간색 공 아이템
+                BALLS.append(Ball((paddle.rect.centerx, paddle.rect.top)))  # 새로운 공 추가
+            ITEMS.remove(item)  # 아이템 제거
 
 def main():
     global life
