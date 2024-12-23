@@ -1,4 +1,7 @@
 가장 간단한 수준의 블럭깨기 게임을 즐겨보세요
 
-(사진)
+
+![image](https://github.com/user-attachments/assets/f073a494-54ae-4f94-85c9-9427470a6c35)
+
+![image](https://github.com/user-attachments/assets/4d7b6ccd-7279-4731-a709-cad79ea039b2)
 
